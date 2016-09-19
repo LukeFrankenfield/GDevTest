@@ -10,6 +10,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.packtpub.libgdx.canyonbunny.util.CameraHelper;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 
 public class WorldController extends InputAdapter {
 	private static final String TAG = WorldController.class.getName();
@@ -31,15 +33,25 @@ public class WorldController extends InputAdapter {
 	private void initTestObjects() {
 		//Create new array for 5 sprites
 		testSprites = new Sprite[5];
+		
+		Array<TextureRegion> regions = new Array<TextureRegion>();
+		regions.add(Assets.instance.bunny.head);
+		regions.add(Assets.instance.feather.feather);
+		regions.add(Assets.instance.goldCoin.goldCoin);
+		
+		
+		/* REMOVED
 		// Create empty POT-sized Pixmap with 9 bit RGBA Pixel data
 		int width = 32;
 		int height = 32;
 		Pixmap pixmap = createProceduralPixmap(width, height);
 		Texture texture = new Texture(pixmap);
+		*/
+		
 		//create new sprites using the pixmap
 		for (int i =0; i<testSprites.length; i++)
 		{
-			Sprite spr = new Sprite(texture);
+			Sprite spr = new Sprite(regions.random());
 			spr.setSize(1, 1);
 			//set origin to center
 			spr.setOrigin(spr.getWidth()/2,spr.getHeight()/2);
