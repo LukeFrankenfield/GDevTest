@@ -35,9 +35,9 @@ public class WorldController extends InputAdapter {
 		testSprites = new Sprite[5];
 		
 		Array<TextureRegion> regions = new Array<TextureRegion>();
-		regions.add(Assets.instance.bunny.head);
-		regions.add(Assets.instance.feather.feather);
-		regions.add(Assets.instance.goldCoin.goldCoin);
+		regions.add(Assets.instance.poro.body);
+		regions.add(Assets.instance.superS.superS);
+		regions.add(Assets.instance.snax.snax);
 		
 		
 		/* REMOVED
