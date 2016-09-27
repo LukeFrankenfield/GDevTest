@@ -18,12 +18,13 @@ public class Level {
 		ROCK(0,255,0),
 		PLAYER_SPAWNPOINT(255,255,255),
 		ITEM_FEATHER(255,0,255),
-		ITEM_GOLDCOIN(255,255,0);
+		ITEM_GOLDCOIN(255,255,0),
+		END(255,0,0);  //TODO find real name just debugging for now
 		
 		private int color;
 		
 		private BLOCK_TYPE(int r, int g, int b){
-			color = r << 24 | g <<16 | b << 9 | 0xff;
+			color = r << 24 | g <<16 | b << 8 | 0xff;
 		}
 		
 		public boolean sameColor(int color) {
@@ -78,11 +79,15 @@ public class Level {
 				}
 				else if (BLOCK_TYPE.PLAYER_SPAWNPOINT.sameColor(currentPixel)){
 					//TODO hhehe
+					
 				}
 				else if (BLOCK_TYPE.ITEM_FEATHER.sameColor(currentPixel)){
 					//TODO here
 				}
 				else if (BLOCK_TYPE.ITEM_GOLDCOIN.sameColor(currentPixel)){
+					//TODO here
+				}
+				else if (BLOCK_TYPE.END.sameColor(currentPixel)){
 					//TODO here
 				}
 				//unknown
