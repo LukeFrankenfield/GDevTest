@@ -106,6 +106,7 @@ public class Level {
 		clouds.position.set(0,2);
 		mountains = new Mountains(pixmap.getWidth());
 		mountains.position.set(-1,-1);
+		waterOverlay = new WaterOverlay(pixmap.getWidth());
 		waterOverlay.position.set(0,-3.75f);
 		
 		//free memory

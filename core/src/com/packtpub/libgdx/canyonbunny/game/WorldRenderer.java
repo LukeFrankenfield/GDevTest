@@ -77,7 +77,7 @@ public class WorldRenderer implements Disposable {
 		float x = cameraGUI.viewportWidth - 50 - Constants.LIVES_START * 50;
 		float y = -15;
 		
-		for (int i = 0; worldController.lives <= i; i++){
+		for (int i = 0; i < worldController.lives ; i++){
 			if(worldController.lives<=i)
 				batch.setColor(0.5f,0.5f,0.5f,0.5f);
 			batch.draw(Assets.instance.bunny.head,x+i*50, y, 50, 50, 120, 120, 0.35f, -0.35f, 0);
