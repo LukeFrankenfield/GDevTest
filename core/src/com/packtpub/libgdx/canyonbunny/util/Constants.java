@@ -10,7 +10,7 @@ public class Constants {
 	//Location of texture atlas package
 	public static final String TEXTURE_ATLAS_OBJECTS = "images/canyonbunny.atlas";
 	//location of level 01
-	public static final String LEVEL_01 = "images/level-01.png";
+	public static final String LEVEL_01 = "images/level_01.png";
 	//Amount of starting lives at each level
 	public static final int LIVES_START = 3;
 }
