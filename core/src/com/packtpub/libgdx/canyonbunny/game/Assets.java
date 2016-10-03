@@ -7,15 +7,12 @@ import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetDescriptor;
-import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.utils.Disposable;
 import com.packtpub.libgdx.canyonbunny.util.Constants;
 
 /**
@@ -65,6 +62,7 @@ public class Assets implements Disposable, AssetErrorListener {
 		snax = new AssetSnax(atlas);
 		superS = new AssetSuperS(atlas);
 		levelDecoration = new AssetLevelDecoration(atlas);
+		fonts = new AssetFonts();
 	}
 	
 	public class AssetFonts {
@@ -145,7 +143,7 @@ public class Assets implements Disposable, AssetErrorListener {
 	 */
 	@Override
 	public void error(AssetDescriptor asset, Throwable throwable) {
-		Gdx.app.error(TAG, "Couldn't load asset '"+asset +"'", (Exception)throwable);
+		Gdx.app.error(TAG, "Couldn't load asset '"+asset +"'", throwable);
 	}
 
 	/* (non-Javadoc)
