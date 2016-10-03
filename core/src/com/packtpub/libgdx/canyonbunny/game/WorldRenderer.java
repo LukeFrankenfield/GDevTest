@@ -69,7 +69,7 @@ public class WorldRenderer implements Disposable {
 	private void renderGuiScore(SpriteBatch batch){
 		float x = -15;
 		float y = -15;
-		batch.draw(Assets.instance.goldCoin.goldCoin, x, y, 50, 50, 100, 100, 0.35f, -0.35f, 0);
+		batch.draw(Assets.instance.snax.snax, x, y, 50, 50, 100, 100, 0.35f, -0.35f, 0);
 		Assets.instance.fonts.defaultBig.draw(batch,""+worldController.score, x + 75, y+ 37);
 	}
 	
@@ -80,7 +80,7 @@ public class WorldRenderer implements Disposable {
 		for (int i = 0; i < worldController.lives ; i++){
 			if(worldController.lives<=i)
 				batch.setColor(0.5f,0.5f,0.5f,0.5f);
-			batch.draw(Assets.instance.bunny.head,x+i*50, y, 50, 50, 120, 120, 0.35f, -0.35f, 0);
+			batch.draw(Assets.instance.poro.body,x+i*50, y, 50, 50, 120, 120, 0.35f, -0.35f, 0);
 			batch.setColor(1,1,1,1);
 		}
 	}

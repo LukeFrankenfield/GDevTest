@@ -36,7 +36,7 @@ public class Assets implements Disposable, AssetErrorListener {
 	}
 	
 	public AssetPoro poro;
-	public AssetIce Ice;
+	public AssetIce ice;
 	public AssetSnax snax;
 	public AssetSuperS superS;
 	public AssetLevelDecoration levelDecoration;
@@ -61,7 +61,7 @@ public class Assets implements Disposable, AssetErrorListener {
 		
 		//create game resource objects
 		poro = new AssetPoro(atlas);
-		Ice = new AssetIce(atlas);
+		ice = new AssetIce(atlas);
 		snax = new AssetSnax(atlas);
 		superS = new AssetSuperS(atlas);
 		levelDecoration = new AssetLevelDecoration(atlas);
@@ -90,9 +90,6 @@ public class Assets implements Disposable, AssetErrorListener {
 			defaultBig.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		}
 	}
-	
-	
-	
 	
 	
 	public class AssetPoro {

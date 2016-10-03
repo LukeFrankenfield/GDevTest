@@ -20,8 +20,8 @@ public class Mountains extends AbstractGameObject {
 	private void init(){
 		dimension.set(10,2);
 	
-		regMountainLeft = Assets.instance.levelDecoration.mountainLeft;
-		regMountainRight = Assets.instance.levelDecoration.mountainRight;
+		regMountainLeft = Assets.instance.levelDecoration.mountains;
+		regMountainRight = Assets.instance.levelDecoration.mountains;
 		
 		// Shift mountain and extend length
 		origin.x = -dimension.x * 2;
