@@ -13,4 +13,5 @@ public class Constants {
 	public static final String LEVEL_01 = "images/level_01.png";
 	//Amount of starting lives at each level
 	public static final int LIVES_START = 3;
+	public static final float ITEM_FEATHER_POWERUP_DURATION = 9;
 }

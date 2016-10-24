@@ -1,6 +1,12 @@
 package com.packtpub.libgdx.canyonbunny.game;
 
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.math.Rectangle;
+import com.packtpub.libgdx.canyonbunny.game.objects.BunnyHead;
+import com.packtpub.libgdx.canyonbunny.game.objects.BunnyHead.JUMP_STATE;
+import com.packtpub.libgdx.canyonbunny.game.objects.Feather;
+import com.packtpub.libgdx.canyonbunny.game.objects.GoldCoin;
+import com.packtpub.libgdx.canyonbunny.game.objects.Rock;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -17,6 +23,10 @@ import com.packtpub.libgdx.canyonbunny.util.Constants;
 
 public class WorldController extends InputAdapter {
 	private static final String TAG = WorldController.class.getName();
+	
+	//Private fields
+	private Rectangle r1 = new Rectangle();
+	private Rectangle r2 = new Rectangle();
 	
 	//PUBLIC FIELDS
 	public Level level;
@@ -37,60 +47,130 @@ public class WorldController extends InputAdapter {
 		initLevel();
 	}
 	
-	//TODO REMOVE?????
-//	private Pixmap createProceduralPixmap(int width, int height)
-//	{ 
-//		Pixmap pixmap = new Pixmap(width,height,Format.RGBA8888);
-//		//Fill square with red color at 50% opacity
-//		pixmap.setColor(1, 0, 0, 0.5f);
-//		pixmap.fill();
-//		//draw a yellow -colored x shape on square
-//		pixmap.setColor(1,1,0,1);
-//		pixmap.drawLine(0, 0, width, height);
-//		pixmap.drawLine(width, 0, 0, height);
-//		//draw a cyan - colored border around square
-//		pixmap.setColor(0,1,1,1);
-//		pixmap.drawRectangle(0, 0, width, height);
-//		
-//		return pixmap;
-//	}
 	
 	public void update (float deltaTime){
 		handleDebugInput(deltaTime);
+		handleInputGame(deltaTime);
+		level.update(deltaTime);
+		testCollisions();
 		cameraHelper.update(deltaTime);
 	}
 	
 	private void initLevel(){
 		score = 0;
 		level = new Level(Constants.LEVEL_01);
+		cameraHelper.setTarget(level.bunnyHead);
 	}
+	
+	/**
+	 * On Collision with rock make bunny interact with it as if it were a solid material
+	 * @param rock
+	 */
+	private void onCollisionBunnyWithRock(Rock rock){
+		BunnyHead bunnyHead = level.bunnyHead;
+		float heightDifference = Math.abs(bunnyHead.position.y - (rock.position.y + rock.bounds.height));
+		if (heightDifference > 0.25f){
+			boolean hitRightEdge = bunnyHead.position.x > (rock.position.x + rock.bounds.width / 2.0f);
+			if (hitRightEdge){
+				bunnyHead.position.x = rock.position.x + rock.bounds.width;
+			} else {
+				bunnyHead.position.x  = rock.position.x - bunnyHead.bounds.width;
+			}
+			return;
+		}
+		
+		switch (bunnyHead.jumpState) {
+		case GROUNDED:
+			break;
+		case JUMP_FALLING:
+		case FALLING:
+			bunnyHead.position.y = rock.position.y + bunnyHead.bounds.height + bunnyHead.origin.y;
+			bunnyHead.jumpState = JUMP_STATE.GROUNDED;
+			break;
+		case JUMP_RISING:
+			bunnyHead.position.y = rock.position.y+bunnyHead.bounds.height + bunnyHead.origin.y;
+			break;
+		}
+	}
+	/**
+	 * On collision with coin, make the coin disappear
+	 * @param goldcoin
+	 */
+	private void onCollisionBunnyWithGoldCoin(GoldCoin goldcoin){
+		goldcoin.collected = true;
+		score += goldcoin.getScore();
+		Gdx.app.log(TAG, "Gold coin collected");
+	}
+	/**
+	 * On collision with Feather, gain ability to fly and make feather dissappear
+	 * @param feather
+	 */
+	private void onCollisionBunnyWithFeather(Feather feather){
+		feather.collected = true;
+		score += feather.getScore();
+		level.bunnyHead.setFeatherPowerup(true);
+		Gdx.app.log(TAG, "Feather collected");
+		
+	}
+	
+	private void testCollisions(){
+		r1.set(level.bunnyHead.position.x, level.bunnyHead.position.y, level.bunnyHead.bounds.width, level.bunnyHead.bounds.height);
+		//test collision bunnyhead <-> rock
+		for(Rock rock : level.rocks)
+		{	
+			r2.set(rock.position.x,rock.position.y,rock.bounds.width,rock.bounds.height);
+			if(!r1.overlaps(r2)) continue;
+			// Test all rocks
+			onCollisionBunnyWithRock(rock);
+		}
+		//Test collision <-> Gold coins
+		for(GoldCoin goldCoin : level.goldCoins)
+		{	
+			if (goldCoin.collected) continue;
+			r2.set(goldCoin.position.x,goldCoin.position.y,goldCoin.bounds.width,goldCoin.bounds.height);
+			if(!r1.overlaps(r2)) continue;
+			// Test all coins
+			onCollisionBunnyWithGoldCoin(goldCoin);
+		}
+		// Test collision <-> Feather
+		for(Feather feather : level.feathers)
+		{	
+			if (feather.collected) continue;
+			r2.set(feather.position.x,feather.position.y,feather.bounds.width,feather.bounds.height);
+			if(!r1.overlaps(r2)) continue;
+			// Test all featers
+			onCollisionBunnyWithFeather(feather);
+		}
+			
+	}
+	
 	
 	private void handleDebugInput(float deltaTime) {
 		if (Gdx.app.getType() != ApplicationType.Desktop) return;
 		
-	
-		// Camera Controls (move)
-		float camMoveSpeed = 5 * deltaTime;
-		float camMoveSpeedAccelerationFactor = 5;
-		if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
-			camMoveSpeed *= camMoveSpeedAccelerationFactor;
+		if (!cameraHelper.hasTarget(level.bunnyHead)){
+			// Camera Controls (move)
+			float camMoveSpeed = 5 * deltaTime;
+			float camMoveSpeedAccelerationFactor = 5;
+			if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
+				camMoveSpeed *= camMoveSpeedAccelerationFactor;
+			}
+			if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+				moveCamera(-camMoveSpeed, 0);
+			}
+			if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+				moveCamera(camMoveSpeed, 0);
+			}
+			if (Gdx.input.isKeyPressed(Keys.UP)) {
+				moveCamera(0, camMoveSpeed);
+			}
+			if (Gdx.input.isKeyPressed(Keys.DOWN)) {
+				moveCamera(0, -camMoveSpeed);
+			}
+			if (Gdx.input.isKeyPressed(Keys.BACKSPACE)) {
+				cameraHelper.setPosition(0, 0);
+			}
 		}
-		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
-			moveCamera(-camMoveSpeed, 0);
-		}
-		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
-			moveCamera(camMoveSpeed, 0);
-		}
-		if (Gdx.input.isKeyPressed(Keys.UP)) {
-			moveCamera(0, camMoveSpeed);
-		}
-		if (Gdx.input.isKeyPressed(Keys.DOWN)) {
-			moveCamera(0, -camMoveSpeed);
-		}
-		if (Gdx.input.isKeyPressed(Keys.BACKSPACE)) {
-			cameraHelper.setPosition(0, 0);
-		}
-
 		// Camera Controls (zoom)
 		float camZoomSpeed = 1 * deltaTime;
 		float camZoomSpeedAccelerationFactor = 5;
@@ -123,7 +203,36 @@ public class WorldController extends InputAdapter {
 			init();
 			Gdx.app.debug(TAG, "Game world Resetted");
 		}
+		else if (keyCode == Keys.ENTER){
+			cameraHelper.setTarget(cameraHelper.hasTarget() ? null: level.bunnyHead);
+			Gdx.app.debug(TAG, "Camera follow enabled: "+cameraHelper.hasTarget());
+		}
 		return false;
+	}
+	
+	
+	private void handleInputGame (float deltaTime){
+		if(cameraHelper.hasTarget(level.bunnyHead)){
+			//player movement
+			if(Gdx.input.isKeyPressed(Keys.LEFT)){
+				level.bunnyHead.velocity.x = -level.bunnyHead.terminalVelocity.x;
+			}
+			if(Gdx.input.isKeyPressed(Keys.RIGHT)){
+				level.bunnyHead.velocity.x = level.bunnyHead.terminalVelocity.x;
+			} else {
+				//Execute auto-forward movemnt on non-desktop platform
+				if(Gdx.app.getType() != ApplicationType.Desktop) {
+					level.bunnyHead.velocity.x = level.bunnyHead.terminalVelocity.x;
+				}
+			}
+			
+			//BunnyJUMP
+			if (Gdx.input.isTouched() || Gdx.input.isKeyPressed(Keys.SPACE)) {
+				level.bunnyHead.setJumping(true);
+			} else {
+				level.bunnyHead.setJumping(false);
+			}
+		}
 	}
 	
 }

@@ -18,13 +18,13 @@ public class Rock extends AbstractGameObject {
 		dimension.set(1,1.5f);
 		regEdge = Assets.instance.rock.edge;
 		regMiddle = Assets.instance.rock.middle;
-	
 		//length of this rock
 		setLength(1);
 	}
 	
 	public void setLength (int length) {
 		this.length = length;
+		bounds.set(0,0,dimension.x * length, dimension.y);
 	}
 	
 	public void increaseLength(int ammount){
@@ -34,7 +34,6 @@ public class Rock extends AbstractGameObject {
 	
 	@Override
 	public void render(SpriteBatch batch) {
-		// TODO Auto-generated method stub
 		TextureRegion reg = null;
 		 float relX = 0;
 		 float relY = 0;
